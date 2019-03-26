@@ -1,0 +1,7 @@
+ a) 执行增加命令，如下：git   add   .    （这后面是一个英文的句号）
+
+　　 b) 执行提交命令，如下：git   commit   –m   “1”    (如果提交单个文件1，就这样写；如果提交所有文件，写成：git   commit   –m  *)
+
+　　 c) 执行推送命令，如下：git   push   git@github.com:ll623548198/blus.git
+
+　　这样就完成了我们要做的所有任务。
