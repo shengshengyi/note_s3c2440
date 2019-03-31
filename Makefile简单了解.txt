@@ -1,0 +1,95 @@
+目标：依赖1 依赖2
+[TAB]命令
+
+
+%.o：表示所用的.o文件
+%.c：表示所有的.c文件
+$@：表示目标
+$<：表示第1个依赖文件
+$^：表示所有依赖文件
+
+
+================================================================
+clean:
+	rm -f *.bin $(objs) *.elf *.dis
+.PHONY: clean
+
+
+==================================================================
+:= # 即时变量
+= # 延时变量
+?= # 延时变量, 如果是第1次定义才起效, 如果在前面该变量已定义则忽略这句
++= # 附加, 它是即时变量还是延时变量取决于前面的定义
+?=：如果这个变量在前面已经被定义了，这句话就不会起效果，
+
+
+=================================================================
+
+函数patsubst语法如下：
+$(patsubst pattern,replacement,$(var))
+patsubst函数是从var变量里面取出每一个值，如果这个符合pattern格式，把它替换成replacement格式。
+实例：
+files2 = a.c b.c c.c d.c e.c abc
+dep_files = $(patsubst %.c,%.d,$(files2))
+all:
+	@echo dep_files = $(dep_files)
+
+结果：
+dep_files = a.d b.d c.d d.d e.d abc
+
+==================================================================
+函数Wildcard语法如下：
+$(wildcard pattern) #pattern定义了文件名的格式,wildcard取出其中存在的文件
+
+实例1：
+在该目录下创建三个文件：a.c b.c c.c
+
+files = $(wildcard *.c)
+all:
+	@echo files = $(files)
+结果：
+files = a.c b.c c.c
+
+实例2：我们也可以用wildcard函数来判断，真实存在的文件
+files2 = a.c b.c c.c d.c e.c abc
+files3 = $(wildcard $(files2))
+all:
+	@echo files3 = $(files3)
+结果：
+files3 = a.c b.c c.c
+
+================================================================
+函数filter/filter-out语法如下：
+$(filter pattern...,text) # 在text中取出符合patten格式的值
+$(filter-out pattern...,text) # 在text中取出不符合patten格式的值
+
+实例：
+C = a b c d/
+
+D = $(filter %/, $(C))
+E = $(filter-out %/, $(C))
+all:
+	@echo D = $(D)
+	@echo E = $(E)
+
+结果：
+D = d/
+E = a b c
+
+====================================================================
+
+函数foreach语法如下：
+$(foreach var,list,text)
+
+前两个参数，‘var’和‘list’，将首先扩展，注意最后一个参数‘text’此时不扩展；接着，对每一个‘list’扩展产生的字，将用来为‘var’扩展后命名的变量赋值；然后‘text’引用该变量扩展；因此它每次扩展都不相同。结果是由空格隔开的‘text’ 在‘list’中多次扩展的字组成的新的‘list’。‘text’多次扩展的字串联起来，字与字之间由空格隔开，如此就产生了函数foreach的返回值。
+
+实例：
+A = a b c
+B = $(foreach f, &(A), $(f).o)
+all:
+	@echo B = $(B)
+
+结果：
+B = a.o b.o c.o
+=====================================================================
+
